@@ -31,8 +31,9 @@ Scrape data, and filter out the stuff we dont need
     ./manage_data.py.py download_advertisements
     ./manage_data.py filter_advertisements
 
-## set up the database
 
+## set up the database
+Use these commands to make database for the API
 
     ./manage_data.py init_database_advertisements
     ./manage_data.py init_database_techwords
@@ -50,8 +51,15 @@ If you want to keep database up to date automatically
 
 
 
+# Run the API
+Start the api
 
-# Better server for Flask
+        ./api.py
+
+Test it with web server, use the html files from examples-folder
+
+
+### Better server for Flask
 
 wsgi for apache
 
