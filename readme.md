@@ -42,6 +42,7 @@ Scrape data, and filter out the stuff we dont need
 
 ## put these to cron
 If you want to keep database up to date automatically
+
        ./manage_data.py.py download_advertisements
        ./manage_data.py filter_advertisements
        ./manage_data.py update_database
