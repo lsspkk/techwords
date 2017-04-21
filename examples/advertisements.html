@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato" />
+
+<title>Ilmoitukset ja hakutulokset</title>
+<style>
+body {  margin: 30px 0;  font-family: Lato; }
+th, td { min-width:50px; font-size: 10px;text-align:center; }
+.ad { font-size: 11px; width: auto; padding: 2px 10px; }
+.ad:hover { cursor: pointer; background: #ddd; }
+.ad.selected { background: #aaa; }
+#result { white-space: pre-line; }
+.found { background-color: #afe; padding: 2px; }
+.techword { background-color: #9fd; padding: 2px 4px;margin-right: 10px; }
+#techwords { padding-bottom: 20px; display: block; width: 100%; }
+
+</style>
+<script type="text/javascript">
+
+
+function formatDate(date) {
+  return new Date(date).toISOString().slice(0, 10);
+}
+window.onload = function () {
+    var url = 'http://localhost:9090/api/v1/advertisements';
+    var today = new Date();
+    var history = new Date();
+    history.setDate(today.getDate() - 42);
+    console.log(today);
+    $.getJSON(
+      url+'?start_date='+history.toISOString()+
+      '&end_date='+today.toISOString(),
+      function(ads) {
+        for (var i=ads.length-1; i >= 0; i--) {
+          $('#advertisements').append('<div class="ad '+
+            +ads[i].id + '" title="'
+            + formatDate(ads[i].start_date) + " : " + ads[i].title
+            + '" onclick="matchresult('+ads[i].id+')">'
+            +ads[i].title.substring(0,45)+'</div>');
+        }
+      });
+}
+
+function matchresult(id) {
+  console.log(id);
+  var url = 'http://localhost:9090/api/v1/matchresult';
+  $('#techwords').html('');
+  $('#result').html('');
+  $('.selected').removeClass('selected');
+  $('.'+id).addClass('selected');
+
+  $.getJSON(
+    url+'/'+ id,
+    function(result){
+      console.log(result);
+      var r ="";
+      for( var i=0;i < result.matches.length; i++ ) {
+        $('#techwords').append('<span class="techword">'
+          +result.matches[i].word
+          +'</span>');
+
+        var start_index = result.matches[i].index;
+        var end_index = result.text.length;
+        if( i == 0 && start_index != 0 ) {
+          r += result.text.substring(0,start_index);
+        }
+        if( result.matches.length > (i+1) ) {
+          end_index = result.matches[i+1].index;
+        }
+
+        r += "<span class='found'>"
+          + result.text.substring(start_index, start_index+result.matches[i].search_string.length)
+          + "</span>"
+          + result.text.substring(start_index+result.matches[i].search_string.length, end_index);
+        }
+      if(result.matches.length == 0) {
+        $('#techwords').html('<span class="found">tästä ilmoituksesta ei löytynyt hakusanoja</span>');
+
+        r = result.text;
+      }
+      $('#result').html(r);
+    });
+
+
+}
+</script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h1>Ilmoitukset</h1>
+        <div id="advertisements"></div>
+      </div>
+        <div class="col-md-8">
+          <h1>Hakutulokset</h1>
+          <div id="techwords"></div>
+          <div id="result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

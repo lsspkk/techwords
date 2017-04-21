@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato" />
+
+<title>TekniikkaTrendit</title>
+<style>
+body {  margin: 10px 0;  font-family: Lato; }
+th, td { min-width:50px; font-size: 10px;text-align:center; }
+</style>
+<script type="text/javascript">
+
+window.onload = function () {
+    var url = 'http://localhost:9090/api/v1/trends';
+    var today = new Date();
+    var history = new Date();
+    history.setDate(today.getDate() - 42);
+    $('#trends').html('<tr><td>Ladataan...</td></tr>');
+    $.getJSON(url+
+             '?start_date='+history.toISOString()+
+             '&end_date='+today.toISOString(),
+             function(json){
+     //console.log(json);
+     $('#trends').html('');
+     var first_time = 1;
+     for( var day in json ) {
+
+       if( first_time ) {
+         var r = '<tr><th></th>';
+         for( var c in json[day] ) {
+            r += '<th>'+json[day][c].word+'</th>';
+         }
+         $('#trends').append(r+'</tr>');
+         first_time = 0;
+       }
+
+       var r = '<tr><th>'+day+'</th>';
+       for( var c in json[day] ) {
+         r +='<td>'+json[day][c].count+'</td>';
+       }
+       $('#trends').append(r+'</tr>');
+    }
+   });
+}
+</script>
+</head>
+<body>
+  <div class="container">
+    <h1>Tekniikkatrendit</h1>
+    <div class="row">
+      <div class="col-12">
+
+        <table>
+          <tbody id="trends">
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+[
+    {
+        "search_strings": [
+            "Angular",
+            "Angular2"
+        ],
+        "word": "Angular"
+    },
+    {
+        "search_strings": [
+            " REST",
+            ",REST"
+        ],
+        "word": "REST"
+    },
+    {
+        "search_strings": [
+            "JavaScript",
+            "JavaScripti"
+        ],
+        "word": "JavaScript"
+    },
+    {
+        "search_strings": [
+            "Java ",
+            "Java,",
+            "Java-",
+            "Javaa",
+            "Java-kehitt",
+            "Java-arkkitehti"
+        ],
+        "word": "Java"
+    },
+    {
+        "search_strings": [
+            "TypeScript",
+            "TypeScripti"
+        ],
+        "word": "TypeScript"
+    },
+    {
+        "search_strings": [
+            "React"
+        ],
+        "word": "React"
+    },
+    {
+        "search_strings": [
+            "Microsoft"
+        ],
+        "word": "Microsoft"
+    },
+    {
+        "search_strings": [
+            "C#"
+        ],
+        "word": "C#"
+    },
+    {
+        "search_strings": [
+            "C++"
+        ],
+        "word": "C++"
+    },
+    {
+        "search_strings": [
+            " C ",
+            " C-,",
+            " C,"
+        ],
+        "word": "C"
+    },
+    {
+        "search_strings": [
+            "Python"
+        ],
+        "word": "Python"
+    },
+    {
+        "search_strings": [
+            "AWS"
+        ],
+        "word": "AWS"
+    },
+    {
+        "search_strings": [
+            "Azure"
+        ],
+        "word": "Azure"
+    },
+    {
+        "search_strings": [
+            "Heroku"
+        ],
+        "word": "Heroku"
+    },
+    {
+        "search_strings": [
+            " GIT"
+        ],
+        "word": "GIT"
+    },
+    {
+        "search_strings": [
+            "Windows"
+        ],
+        "word": "Windows"
+    },
+    {
+        "search_strings": [
+            "Linux"
+        ],
+        "word": "Linux"
+    },
+    {
+        "search_strings": [
+            "Scrum"
+        ],
+        "word": "Scrum"
+    },
+    {
+        "search_strings": [
+            "Docker"
+        ],
+        "word": "Docker"
+    },
+    {
+        "search_strings": [
+            "PHP"
+        ],
+        "word": "PHP"
+    },
+    {
+        "search_strings": [
+            "html5"
+        ],
+        "word": "html5"
+    },
+    {
+        "search_strings": [
+            "jQuery"
+        ],
+        "word": "jQuery"
+    },
+    {
+        "search_strings": [
+            "jenkins"
+        ],
+        "word": "jenkins"
+    },
+    {
+        "search_strings": [
+            " qt"
+        ],
+        "word": "QT"
+    },
+    {
+        "search_strings": [
+            "SQL",
+            "SQL-tietokannoista",
+            "SQL-tietokan"
+        ],
+        "word": "SQL"
+    },
+    {
+        "search_strings": [
+            "CSS",
+            " SASS",
+            " LESS"
+        ],
+        "word": "CSS"
+    },
+    {
+        "search_strings": [
+            "node.js",
+            "nodejs"
+        ],
+        "word": "Node.js"
+    }
+]
