@@ -1,6 +1,6 @@
 *.pyc
 *~
 data/bar.json
-data/bar_fitlered.json
+data/bar_filtered.json
 data/foo.db
 encountered_problems.md

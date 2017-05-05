@@ -77,8 +77,11 @@ class Match(Base):
     count = Column(Integer)
 
 
-
-
+# print to web server error log
+#def eprint(*args, **kwargs):
+#    print(*args, file=sys.stderr, **kwargs)
+#
+#eprint("---api databse file: ", manager.database_file)
 engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine)

@@ -46,5 +46,5 @@ def check_true_false(string):
 
 
 if __name__ == '__main__':
-    print "check_dates"
-    print check_dates("2017-04-21T06:38:19.861Z", "2017-0-03")
+    print ("check_dates")
+    print (check_dates("2017-04-21T06:38:19.861Z", "2017-0-03"))

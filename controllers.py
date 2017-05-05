@@ -105,8 +105,8 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
 
 
 if __name__ == '__main__':
-    print 'get_counts'
-    print json.dumps(get_total_counts(datetime(2017,04,02)),indent=4,sort_keys=True)
+    print ('get_counts')
+    print (json.dumps(get_total_counts(datetime(2017,4,2)),indent=4,sort_keys=True))
 
-    print 'get_techword_counts'
-    print json.dumps(get_techword_counts(datetime(2017,04,19),datetime(2017,04,19)),indent=4,sort_keys=True)
+    print ('get_techword_counts')
+    print (json.dumps(get_techword_counts(datetime(2017,4,19),datetime(2017,4,19)),indent=4,sort_keys=True))

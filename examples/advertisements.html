@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato" />
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Lato" />
 
 <title>Ilmoitukset ja hakutulokset</title>
 <style>
@@ -29,7 +29,7 @@ function formatDate(date) {
   return new Date(date).toISOString().slice(0, 10);
 }
 window.onload = function () {
-    var url = 'http://localhost:9090/api/v1/advertisements';
+    var url = '../api/v1/advertisements';
     var today = new Date();
     var history = new Date();
     history.setDate(today.getDate() - 42);
@@ -50,7 +50,7 @@ window.onload = function () {
 
 function matchresult(id) {
   console.log(id);
-  var url = 'http://localhost:9090/api/v1/matchresult';
+  var url = '../api/v1/matchresult';
   $('#techwords').html('');
   $('#result').html('');
   $('.selected').removeClass('selected');

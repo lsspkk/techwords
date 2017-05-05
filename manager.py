@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-import sys, urllib2, json, io, datetime, calendar, os
+import sys, urllib, json, io, datetime, calendar, os
 import models
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -12,7 +12,7 @@ default_port = 9090 # the port where API is run
 tech_file =  dir_path+'/data/techwords.json'
 ads_file =  dir_path+'/data/bar.json'
 ads_filtered_file =  dir_path+'/data/bar_filtered.json'
-database_file = 'sqlite:///data/foo.db'
+database_file = 'sqlite:///'+ dir_path + '/data/foo.db'
 
 # coders from Pirkanmaa area
 scrape_url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat?lang=fi&hakusana=&hakusanakentta=sanahaku&alueet=pirkanmaa&ilmoitettuPvm=1&valitutAmmattialat=25&vuokrapaikka=---&start=0&kentat=ilmoitusnumero,tyokokemusammattikoodi,ammattiLevel3,tehtavanimi,tyokokemusammatti,tyonantajanNimi,kunta,ilmoituspaivamaara,hakuPaattyy,tyoaikatekstiYhdistetty,tyonKestoKoodi,tyonKesto,tyonKestoTekstiYhdistetty,hakemusOsoitetaan,maakunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&rows=300&sort=mainAmmattiRivino+asc,+tehtavanimi+asc,+tyonantajanNimi+asc,+viimeinenHakupaivamaara+asc&facet.fkentat=ammattiLevel3,maakunta,kunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&facet.fsort=index&facet.flimit=10000&_=1488917769087"
@@ -62,9 +62,9 @@ def download_advertisements():
         with open(ads_file) as data_file:
             ads = json.load(data_file)
     except:
-        print "no ads file, making a new one: %s" % file_name
+        print ("no ads file, making a new one: %s" % file_name)
 
-    r = urllib2.urlopen(scrape_url)
+    r = urllib.urlopen(scrape_url)
     j = json.loads(r.read())
 
     print( "Ilmoituksia tunnetaan: %s kpl" % (len(ads.keys())))
@@ -73,9 +73,9 @@ def download_advertisements():
     timestamp = datetime.datetime.now().isoformat()
     for tag in j["response"]["docs"]:
         if unicode(tag['ilmoitusnumero']) in ads:
-            print "Tunnettiin jo ilmoitus %s" % (tag['ilmoitusnumero'])
+            print ("Tunnettiin jo ilmoitus %s" % (tag['ilmoitusnumero']))
         else:
-            print (str(tag['ilmoitusnumero']) + " " + tag['tehtavanimi'])
+            print ((str(tag['ilmoitusnumero']) + " " + tag['tehtavanimi']))
             url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat/" + str(tag['ilmoitusnumero'])
             r = urllib2.urlopen(url)
             j2 = json.loads(r.read())
@@ -95,7 +95,7 @@ def filter_advertisements():
         with open(ads_file) as data_file:
             ads = json.load(data_file)
     except:
-        print "no file for ads: %s" % ads_file
+        print ("no file for ads: %s" % ads_file)
 
     r = []
     for tag in ads:
@@ -138,7 +138,7 @@ def get_techwords():
         with open(tech_file) as data_file:
             words = json.load(data_file)
     except:
-        print "no file for techwords: %s" % tech_file
+        print ("no file for techwords: %s" % tech_file)
 
     return words
 
@@ -161,21 +161,21 @@ def pretty_ads():
         with io.open( file_name2, "w", encoding="utf-8") as f:
             f.write(json.dumps(ads, indent=4, sort_keys=True, ensure_ascii=False))
     except:
-        print "no file: %s" % ads_file
+        print ("no file: %s" % ads_file)
 
 
 
 def print_info():
-    print """
+    print ("""
     ./manager.py download_ads
           - get new advertisements from internet
-            write json to %s""" % ads_file
-    print """
+            write json to %s""" % ads_file)
+    print ("""
     ./manager.py filter_ads
          - make the advertisements ready for our database:
            read json from %s
-           and write to %s""" % (ads_file, ads_filtered_file)
-    print """
+           and write to %s""" % (ads_file, ads_filtered_file))
+    print ("""
     ./manager.py db_init_ads
           - clear and add the advertisements into database
             read json from %s
@@ -187,7 +187,7 @@ def print_info():
     ./manager.py db_update
           - add new advertisements (that are not already) into database
           - find techwords from advertisements
-          """ %(ads_filtered_file, tech_file)
+          """ %(ads_filtered_file, tech_file))
 
 
 
@@ -216,5 +216,5 @@ if __name__ == '__main__':
             pretty_ads()
 
         else:
-            print "Bad parameter"
+            print ("Bad parameter")
             print_info()
