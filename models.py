@@ -7,9 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Sequence, DateTime
 from sqlalchemy.orm import sessionmaker
 
-import api
 import manager
-db = SQLAlchemy(api.app)
 
 Base = declarative_base()
 
@@ -83,7 +81,8 @@ class Match(Base):
 
 engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+session_factory = sessionmaker(bind=engine)
+Session = scoped_session(session_factory)
 
 
 
@@ -98,6 +97,7 @@ def init_techwords():
         tw = TechWord(word=w['word'], search_strings=json.dumps(w['search_strings']).lower())
         s.add(tw)
     s.commit()
+    s.remove()
 
 # clear all ads from database and add all scraped ads to database
 def init_ads():
@@ -119,6 +119,7 @@ def init_ads():
         s.add(ad)
 
     s.commit()
+    s.remove()
 
 
 
@@ -132,7 +133,7 @@ def search_techwords_from_ad(text, tech_words, results):
             i = tl.find(search_string)
             if i >= 0:
                 results[tw['id']] = results[tw['id']] + 1
-                #print "loytyi", search_string
+                #print ("loytyi", search_string)
                 break
 #
 
@@ -163,7 +164,7 @@ def store_results_for_all_dates(ad, results, s):
                 s.add(new_m)
             elif len(m) == 1:
                 m[0].count = m[0].count + results[key]
-                #print day, '-', toDate, '-->', m[0].count
+                #print (day, '-', toDate, '-->', m[0].count)
 
         day = day + timedelta(days=1)
 
@@ -191,6 +192,7 @@ def add_new_advertisements():
         s.add(ad)
 
     s.commit()
+    s.remove()
 
 
 # clear old day/count match/count info
@@ -202,6 +204,7 @@ def update_database():
     for m in matches: s.delete(m)
     for d in days: s.delete(d)
     s.commit()
+    s.remove()
 
     search_all_techwords()
 
@@ -221,8 +224,8 @@ def search_all_techwords():
                           "search_strings": json.loads(tw.search_strings),
                           "id": tw.id }
         search_ready_words.append(search_ready_tw)
-        #print "\n---", tw.word
-        #for key in search_ready_tw['search_strings']: print key,
+        #print ("\n---", tw.word)
+        #for key in search_ready_tw['search_strings']: print (key,)
 
     results = {}
 
@@ -230,10 +233,11 @@ def search_all_techwords():
         for tw in search_ready_words: results[tw['id']] = 0
 
         search_techwords_from_ad(ad.text, search_ready_words, results)
-        print "etsitaan tech_wordit ilmoituksesta: %s" % ad.title
-        #for key in results: print key, ':', results[key], ' ',
-        #print ''
+        print ("etsitaan tech_wordit ilmoituksesta: %s" % ad.title)
+        #for key in results: print (key, ':', results[key], ' ',)
+        #print ('')
 
         store_results_for_all_dates(ad, results, s)
 
     s.commit()
+    s.remove()

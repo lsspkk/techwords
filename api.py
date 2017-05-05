@@ -52,7 +52,7 @@ def trends():
         dates = utils.check_dates(start_date, end_date)
         r = controllers.get_techword_counts(dates[0],dates[1])
         return jsonify(r)
-    except ValueError, e:
+    except ValueError as e:
         return bad_request(e)
 
 
@@ -150,7 +150,7 @@ def advertisements():
             return jsonify([a.serialize_with_text for a in r])
 
         return jsonify([a.serialize for a in r])
-    except ValueError, e:
+    except ValueError as e:
         return bad_request(e)
 
 
