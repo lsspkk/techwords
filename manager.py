@@ -14,28 +14,6 @@ database_file = 'sqlite:///data/foo.db'
 scrape_url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat?lang=fi&hakusana=&hakusanakentta=sanahaku&alueet=pirkanmaa&ilmoitettuPvm=1&valitutAmmattialat=25&vuokrapaikka=---&start=0&kentat=ilmoitusnumero,tyokokemusammattikoodi,ammattiLevel3,tehtavanimi,tyokokemusammatti,tyonantajanNimi,kunta,ilmoituspaivamaara,hakuPaattyy,tyoaikatekstiYhdistetty,tyonKestoKoodi,tyonKesto,tyonKestoTekstiYhdistetty,hakemusOsoitetaan,maakunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&rows=300&sort=mainAmmattiRivino+asc,+tehtavanimi+asc,+tyonantajanNimi+asc,+viimeinenHakupaivamaara+asc&facet.fkentat=ammattiLevel3,maakunta,kunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&facet.fsort=index&facet.flimit=10000&_=1488917769087"
 
 
-def print_info():
-    print """
-    manage data download_advertisements
-          - get new advertisements from internet
-            write json to %s""" % ads_file
-    print """
-    manage_data filter_advertisements
-         - make the advertisements ready for our database:
-           read json from %s
-           and write to %s""" % (ads_file, ads_filtered_file)
-    print """
-    manage_data init_database_advertisements
-          - init the advertisements in database
-            read json from %s
-
-    manage_data init_database_techwords
-          - init the techwords in database
-            read json from %s
-
-    manage_data update_database
-          - find techwords from advertisements
-          """ %(ads_filtered_file, tech_file)
 
 
 
@@ -135,7 +113,7 @@ def add_months(sourcedate,months):
 
 
 
-def pretty_advertisements():
+def pretty_ads():
     try:
         with open(ads_file) as data_file:
             ads = json.load(data_file)
@@ -148,6 +126,29 @@ def pretty_advertisements():
 
 
 
+def print_info():
+    print """
+    ./manager.py download_ads
+          - get new advertisements from internet
+            write json to %s""" % ads_file
+    print """
+    ./manager.py filter_ads
+         - make the advertisements ready for our database:
+           read json from %s
+           and write to %s""" % (ads_file, ads_filtered_file)
+    print """
+    ./manager.py db_init_ads
+          - clear and add the advertisements into database
+            read json from %s
+
+    ./manager.py db_init_techwords
+          - clear and add the techwords into database
+            read json from %s
+
+    ./manager.py db_update
+          - add new advertisements (that are not already) into database
+          - find techwords from advertisements
+          """ %(ads_filtered_file, tech_file)
 
 
 
@@ -157,23 +158,23 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1:
         command = sys.argv[1].lower()
-        if command == 'download_advertisements':
+        if command == 'download_ads':
             download_advertisements()
 
-        elif command == 'filter_advertisements':
+        elif command == 'filter_ads':
             filter_advertisements()
 
-        elif command == 'init_database_advertisements':
-            models.init_advertisements()
+        elif command == 'db_init_ads':
+            models.init_ads()
 
-        elif command == 'init_database_techwords':
+        elif command == 'db_init_techwords':
             models.init_techwords()
 
-        elif command == 'update_database':
+        elif command == 'db_update':
             models.update_database()
 
         elif command == 'pretty':
-            pretty_advertisements()
+            pretty_ads()
 
         else:
             print "Bad parameter"

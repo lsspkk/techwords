@@ -1,12 +1,24 @@
 
-POST techword
 
 GET trends
+- date filters
 - with total counts
 
+GET techwords
+
+GET techword/<word>
+
+GET advertisements
+- headers
+- text optional
 
 
-Add swagger docs 
+GET matchresult/<ad>/<word>
+
+POST techword
+
+
+
 
 
 Add some kind of access analytics.

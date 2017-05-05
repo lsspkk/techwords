@@ -8,12 +8,12 @@ from sqlalchemy import Column, Integer, String, Sequence, DateTime
 from sqlalchemy.orm import sessionmaker
 
 
-import manage_data
+import manager
 
 
 Base = declarative_base()
 
-
+# techword has a word, e.g. C and search_strings e.g. " C,", " C-"
 class TechWord(Base):
     __tablename__ = 'techword'
     id = Column(Integer, Sequence('tech_word_seq'),primary_key=True)
@@ -33,6 +33,7 @@ class TechWord(Base):
                             self.word, self.search_strings)
 
 
+# job advertisement uses the same id as te-keskus website
 class Advertisement(Base):
     __tablename__ = 'advertisement'
     id = Column(Integer,primary_key=True)
@@ -62,13 +63,14 @@ class Advertisement(Base):
         }
 
 
-
+# for each day of year we keep track how many advertisements were active
 class Day(Base):
     __tablename__ = 'day'
     id = Column(Integer, Sequence('day_id'),primary_key=True)
     date = Column(DateTime)
     count = Column(Integer)
 
+# for each day of year and techword we keep track how many ads had the techword
 class Match(Base):
     __tablename__ = 'match'
     id = Column(Integer, Sequence('match_seq'),primary_key=True)
@@ -79,30 +81,31 @@ class Match(Base):
 
 
 
-engine = create_engine(manage_data.database_file)
+engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
 
-
+# clear all techwords from database and add all known techwords to database
 def init_techwords():
     s = Session()
     words = s.query(TechWord)
     for w in words: s.delete(w)
 
-    words = manage_data.get_techwords()
+    words = manager.get_techwords()
     for w in words:
         tw = TechWord(word=w['word'], search_strings=json.dumps(w['search_strings']).lower())
         s.add(tw)
     s.commit()
 
-def init_advertisements():
+# clear all ads from database and add all scraped ads to database
+def init_ads():
     s = Session()
     ads = s.query(Advertisement)
     for a in ads: s.delete(a)
 
-    ads = manage_data.get_advertisements()
+    ads = manager.get_advertisements()
     for a in ads:
         start = datetime.strptime( a['start_date'], "%Y-%m-%dT%H:%M:%S")
         end = datetime.strptime( a['end_date'], "%Y-%m-%dT%H:%M:%S")
@@ -121,7 +124,7 @@ def init_advertisements():
 
 
 
-
+# search all techwords from text of a single advertisement
 def search_techwords_from_ad(text, tech_words, results):
     tl = text.lower()
     for tw in tech_words:
@@ -166,11 +169,11 @@ def store_results_for_all_dates(ad, results, s):
 
 
 
-
+# go through all scraped adds, and add new ones to database
 def add_new_advertisements():
     s = Session()
 
-    ads = manage_data.get_advertisements()
+    ads = manager.get_advertisements()
     for a in ads:
         old = s.query(Advertisement).filter(Advertisement.id == a['id']).all()
         if len(old) != 0:
