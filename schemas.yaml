@@ -1,0 +1,79 @@
+definitions:
+  map_date_techwords:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        $ref: '#/definitions/tech_word'
+  tech_word:
+    type: object
+    properties:
+      word:
+        type: string
+      count:
+        type: integer
+        format: int64
+
+  word:
+    type: object
+    required:
+      - tech_word
+      - search_strings
+    properties:
+      tech_word:
+        type: string
+      search_strings:
+        type: array
+        items:
+          type: string
+
+  techword_array:
+    type: array
+    items:
+      $ref: '#/definitions/word'
+
+
+  advertisement:
+    type: object
+    required:
+      - title
+    properties:
+      title:
+        type: string
+  advertisements_array:
+    type: array
+    items:
+      $ref: '#/definitions/advertisement'
+
+
+  match_result:
+    type: object
+    required:
+      - index
+      - search_string
+      - word
+    properties:
+      index:
+        type: integer
+        format: int64
+        description: string index where techword was found
+      search_string:
+        type: string
+        description: the string that was used to match techword
+      word:
+        type: string
+        description: the techword that was searched for
+
+  match_results:
+    type: object
+    required:
+      - text
+      - matches
+    properties:
+      text:
+        type: string
+        description: the job advertisement text
+      matches:
+        type: array
+        items:
+          $ref: '#/definitions/match_result'

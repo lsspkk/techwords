@@ -29,20 +29,21 @@ window.onload = function () {
      //console.log(json);
      $('#trends').html('');
      var first_time = 1;
-     for( var day in json ) {
+     var days = Object.keys(json);
+     for( var i = days.length-1; i >= 0; i-- ) {
 
        if( first_time ) {
          var r = '<tr><th></th>';
-         for( var c in json[day] ) {
-            r += '<th>'+json[day][c].word+'</th>';
+         for( var c in json[days[i]] ) {
+            r += '<th>'+json[days[i]][c].word+'</th>';
          }
          $('#trends').append(r+'</tr>');
          first_time = 0;
        }
 
-       var r = '<tr><th>'+day+'</th>';
-       for( var c in json[day] ) {
-         r +='<td>'+json[day][c].count+'</td>';
+       var r = '<tr><th>'+days[i]+'</th>';
+       for( var c in json[days[i]] ) {
+         r +='<td>'+json[days[i]][c].count+'</td>';
        }
        $('#trends').append(r+'</tr>');
     }

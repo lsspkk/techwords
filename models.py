@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import json, datetime, sys
 from datetime import datetime, timedelta
 

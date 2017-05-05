@@ -1,18 +1,49 @@
 #!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 from flask import Flask, abort, request, jsonify
 from flask_cors import CORS, cross_origin
+from flasgger import Swagger
 import datetime, json
 import models, controllers, utils
 
+import manager
+
 app = Flask(__name__)
+app.config['SWAGGER'] = { 'title': 'TechWords API', 'uiversion': 2 }
+Swagger(app, template=manager.swagger_template)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # we rely on auto sorting the dates, dont use this:
 # app.config["JSON_SORT_KEYS"] = False
 
 
-@app.route('/api/v1/trends', methods=['POST','GET'])
+@app.route('/api/v1/trends', methods=['GET'])
 def trends():
+    """Get list of technology trends between dates
+    ---
+    parameters:
+     - name: start_date
+       type: string
+       format: date
+       in: query
+     - name: end_date
+       type: string
+       format: date
+       in: query
+    import: "schemas.yaml"
+    responses:
+      200:
+        description: "Dictionary of date strings mapped to array of objects: techword and count"
+        schema:
+            $ref: '#/definitions/map_date_techwords'
+        examples:
+          { "2017-05-01": [ { word: "Python", count: 42 },
+                            { word: "Java", count: 10 }] }
+      404:
+        description: "Bad format in dates"
+    """
+
     today = datetime.datetime.now()
 
     start_date = request.args.get('start_date', today.isoformat())
@@ -27,19 +58,82 @@ def trends():
 
 @app.route('/api/v1/techwords', methods=['GET'])
 def techwords():
+    """Get all techwords
+    ---
+    import: "schemas.yaml"
+    responses:
+      200:
+        description: "Array of objects: tech_word and search_strings used to find it"
+        schema:
+            $ref: '#/definitions/techword_array'
+        examples:
+          [ { tech_word: 'C',  search_strings: [ " C, ", " C." ] } ]
+    """
     words = controllers.get_techwords()
     return jsonify([w.serialize for w in words])
 
+
+
 @app.route('/api/v1/techword/<string:word>', methods=['GET'])
 def techword(word):
+    """Get single techword
+    ---
+    import: "schemas.yaml"
+    parameters:
+      - name: word
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: "The techword objects: tech_word and search_strings used to find it"
+        schema:
+            $ref: '#/definitions/word'
+        examples:
+          { tech_word: 'C',  search_strings: [ " C, ", " C." ] }
+      404:
+        description: "Techword not found"
+    """
     words = controllers.get_techword(word)
     if len(words) == 0:
         return bad_request(("TechWord %s not found" % word))
     return jsonify([w.serialize for w in words])
 
 
+
+
 @app.route('/api/v1/advertisements', methods=['GET'])
 def advertisements():
+    """Get list of job advertisements between dates
+    ---
+    parameters:
+     - name: start_date
+       type: string
+       format: date
+       in: query
+     - name: end_date
+       type: string
+       format: date
+       in: query
+     - name: text
+       in: query
+       type: boolean
+       description: Include the advertisement text in responses
+    import: "schemas.yaml"
+    responses:
+      200:
+        description: "Array of job advertisements"
+        schema:
+            $ref: '#/definitions/advertisements_array'
+        examples:
+          [ {    end_date: "Sun, 19 Feb 2017 22:00:00 GMT", id: 9143236,
+    start_date: "Thu, 19 Jan 2017 22:00:00 GMT",  title: "Ohjelmistosuunnittelija (Magento), Gelo Oy, Tampere"
+        }, {   "end_date": "Tue, 21 Mar 2017 00:00:00 GMT", id: 9143263,
+    start_date: "Thu, 19 Jan 2017 22:00:00 GMT",   title: "Ohjelmistosuunnittelija, PHP Solutions Oy, Tampere"
+        } ]
+      404:
+        description: "Bad format in dates"
+    """
     try:
         start_date = request.args.get('start_date', '')
         end_date = request.args.get('end_date', '')
@@ -59,8 +153,37 @@ def advertisements():
     except ValueError, e:
         return bad_request(e)
 
+
+
+
+
 @app.route('/api/v1/matchresult/<int:id>/<string:word>', methods=['GET'])
 def matchresults(word, id):
+    """Get locations of single techword in advertisement text
+    ---
+    parameters:
+     - name: id
+       type: integer
+       format: int64
+       in: path
+       description: an id of an advertisement e.g. 9143263
+     - name: word
+       type: string
+       in: path
+       description: a known techword e.g. GIT
+    import: "schemas.yaml"
+    responses:
+      200:
+        description: "Advertisement text and array of matches for techword"
+        schema:
+            $ref: '#/definitions/match_results'
+        examples:
+          {  matches: [ { index: 137, search_string: " git", word: "GIT" } ],
+            text: "PHP ...." }
+      404:
+        description: "Parameters for techword or advertisement id are wrong"
+    """
+
     words = controllers.get_techword(word)
     if len(words) == 0:
         return bad_request(("TechWord %s not found" % word))
@@ -76,6 +199,27 @@ def matchresults(word, id):
 
 @app.route('/api/v1/matchresult/<int:id>', methods=['GET'])
 def matchresult(id):
+    """Get locations of all techwords found in advertisement text
+    ---
+    parameters:
+     - name: id
+       type: integer
+       format: int64
+       in: path
+       description: an id of an advertisement e.g. 9143263
+    import: "schemas.yaml"
+    responses:
+      200:
+        description: "Advertisement text and array of matches for techwords"
+        schema:
+            $ref: '#/definitions/match_results'
+        examples:
+          {  matches: [  { index: 90, search_string: "sql", word: "SQL" },
+                         { index: 137, search_string: " git", word: "GIT" } ],
+            text: "PHP ...." }
+      404:
+        description: "Advertisement id are wrong"
+    """
     words = controllers.get_techwords()
     ads = controllers.get_advertisement(id)
     if len(ads) == 0:
@@ -98,6 +242,9 @@ def bad_request(e):
 
 
 
+
+
+
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0', port=9090)
+    app.run(host=manager.default_host, port=manager.default_port)
