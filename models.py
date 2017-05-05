@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 import manager
-
+#database_file = 'sqlite:///data/foo.db'
 
 Base = declarative_base()
 
@@ -81,7 +81,10 @@ class Match(Base):
 
 
 
-
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+        
+eprint("---tietokanta: ", manager.database_file)
 engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
@@ -133,7 +136,7 @@ def search_techwords_from_ad(text, tech_words, results):
             i = tl.find(search_string)
             if i >= 0:
                 results[tw['id']] = results[tw['id']] + 1
-                #print "loytyi", search_string
+                #print ("loytyi", search_string)
                 break
 #
 
@@ -164,7 +167,7 @@ def store_results_for_all_dates(ad, results, s):
                 s.add(new_m)
             elif len(m) == 1:
                 m[0].count = m[0].count + results[key]
-                #print day, '-', toDate, '-->', m[0].count
+                #print (day, '-', toDate, '-->', m[0].count)
 
         day = day + timedelta(days=1)
 
@@ -222,7 +225,7 @@ def search_all_techwords():
                           "search_strings": json.loads(tw.search_strings),
                           "id": tw.id }
         search_ready_words.append(search_ready_tw)
-        #print "\n---", tw.word
+        #print ("\n---", tw.word)
         #for key in search_ready_tw['search_strings']: print key,
 
     results = {}
@@ -231,9 +234,9 @@ def search_all_techwords():
         for tw in search_ready_words: results[tw['id']] = 0
 
         search_techwords_from_ad(ad.text, search_ready_words, results)
-        print "etsitaan tech_wordit ilmoituksesta: %s" % ad.title
+        print ("etsitaan tech_wordit ilmoituksesta: %s" % ad.title)
         #for key in results: print key, ':', results[key], ' ',
-        #print ''
+        #print ('')
 
         store_results_for_all_dates(ad, results, s)
 
