@@ -1,0 +1,4 @@
+*.pyc
+data/bar.json
+data/bar_fitlered.json
+data/foo.db
