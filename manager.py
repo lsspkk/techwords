@@ -10,7 +10,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 default_host = '0.0.0.0' # 0.0.0.0 = localhost  - where API is run
 default_port = 9090 # the port where API is run
 
-logging.basicConfig(handlers=[RotatingFileHandler(dir_path+'nice.log',maxBytes=200000,backupCount=5)], level=logging.DEBUG)
+logging.basicConfig(handlers=[RotatingFileHandler(dir_path+'/nice.log',maxBytes=200000,backupCount=5)], level=logging.DEBUG)
 
 tech_file =  dir_path+'/data/techwords.json'
 ads_file =  dir_path+'/data/bar.json'
