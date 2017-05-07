@@ -30,6 +30,8 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 def trends():
     """Get list of technology trends between dates
     ---
+    tags:
+     - API v1
     parameters:
      - name: start_date
        type: string
@@ -67,6 +69,8 @@ def trends():
 def techwords():
     """Get all techwords
     ---
+    tags:
+     - API v1
     import: "schemas.yaml"
     responses:
       200:
@@ -85,6 +89,8 @@ def techwords():
 def techword(word):
     """Get single techword
     ---
+    tags:
+     - API v1
     import: "schemas.yaml"
     parameters:
       - name: word
@@ -113,6 +119,8 @@ def techword(word):
 def advertisements():
     """Get list of job advertisements between dates
     ---
+    tags:
+     - API v1
     parameters:
      - name: start_date
        type: string
@@ -168,6 +176,8 @@ def advertisements():
 def matchresults(word, id):
     """Get locations of single techword in advertisement text
     ---
+    tags:
+     - API v1
     parameters:
      - name: id
        type: integer
@@ -208,6 +218,8 @@ def matchresults(word, id):
 def matchresult(id):
     """Get locations of all techwords found in advertisement text
     ---
+    tags:
+     - API v1
     parameters:
      - name: id
        type: integer
