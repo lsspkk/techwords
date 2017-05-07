@@ -9,6 +9,7 @@ import cProfile
 from io import StringIO
 import pstats
 import contextlib
+import logging
 
 
 @contextlib.contextmanager
@@ -17,12 +18,12 @@ def profiled():
     pr.enable()
     yield
     pr.disable()
-    s = StringIO.StringIO()
+    s = StringIO()
     ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
     ps.print_stats()
     # uncomment this to see who's calling what
     # ps.print_callers()
-    print(s.getvalue())
+    logging.info(s.getvalue())
 
 
 from models import TechWord, Day, Advertisement, Match
@@ -122,6 +123,10 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
 
     s = models.Session()
     counts = {}
+    # uncomment this to see db query timing results
+    # with profiled():
+    #    matches = s.query(Match).filter(Match.date >= start, Match.date < end).all()
+
     matches = s.query(Match).filter(Match.date >= start, Match.date < end).all()
     for m in matches:
         if m.date.strftime('%Y-%m-%d') not in counts:

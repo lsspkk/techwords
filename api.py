@@ -3,24 +3,30 @@
 
 from flask import Flask, abort, request, jsonify
 from flask_cors import CORS, cross_origin
+from flask_compress import Compress
 from flasgger import Swagger
-import datetime, json
+import datetime, json, time
+import logging
 
-
+compress = Compress()
 app = Flask(__name__)
+compress.init_app(app)
 
 import manager
 import models, controllers, utils
+from utils import measure_time
 
 app.config['SWAGGER'] = { 'title': 'TechWords API', 'uiversion': 2 }
 Swagger(app, template=manager.swagger_template)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+
+
 # we rely on auto sorting the dates, dont use this:
 # app.config["JSON_SORT_KEYS"] = False
 
-
 @app.route('/api/v1/trends', methods=['GET'])
+@measure_time
 def trends():
     """Get list of technology trends between dates
     ---
@@ -45,7 +51,6 @@ def trends():
       404:
         description: "Bad format in dates"
     """
-
     today = datetime.datetime.now()
 
     start_date = request.args.get('start_date', today.isoformat())

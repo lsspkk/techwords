@@ -2,6 +2,9 @@
 # -*- coding: UTF-8 -*-
 import sys, urllib, json, io, datetime, calendar, os
 import urllib.request
+import logging
+from logging.handlers import RotatingFileHandler
+logging.basicConfig(handlers=[RotatingFileHandler('nice.log',maxBytes=200000,backupCount=5)], level=logging.DEBUG)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

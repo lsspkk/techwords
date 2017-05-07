@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import datetime
+import logging, time
+
 
 def check_dates(start_date, end_date):
     accepted_formats = ["%Y-%m-%d", "%Y-%m-%dT%H:%M",
@@ -41,10 +43,26 @@ def check_true_false(string):
     raise ValueError('bad format for true/false parameter: '+string)
     return None
 
+logger1 = logging.getLogger('measure_time')
+def measure_time(method):
 
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
 
+        logger1.info( "function(%s): %2.2fs" % (method.__name__, te-ts) )
+        return result
+
+    return timed
+
+@measure_time
+def time_tester():
+    for a in range(1,200):
+        pow(2,a)
 
 
 if __name__ == '__main__':
     print ("check_dates")
-    print (check_dates("2017-04-21T06:38:19.861Z", "2017-0-03"))
+    print (check_dates("2017-04-21T06:38:19.861Z", "2017-04-03"))
+    time_tester()
