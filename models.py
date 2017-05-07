@@ -83,8 +83,8 @@ class Match(Base):
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-        
-eprint("---tietokanta: ", manager.database_file)
+
+#eprint("---tietokanta: ", manager.database_file)
 engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

@@ -10,26 +10,26 @@ import models
 def get_techwords():
     s = models.Session()
     words = s.query(TechWord).all()
-    s.commit()
+    s.expunge_all(); s.close()
     return words
 
 def get_techword(word):
     s = models.Session()
     word = s.query(TechWord).filter_by(word=word).all()
-    s.commit()
+    s.expunge_all(); s.close()
     return word
 
 def get_advertisement(id):
     s = models.Session()
     ad = s.query(Advertisement).filter(Advertisement.id==id).all()
-    s.commit()
+    s.expunge_all(); s.close()
     return ad
 
 def get_advertisements(start='',end=''):
     s = models.Session()
     if start == '' or end == '':
         ads = s.query(Advertisement).all()
-        s.commit()
+        s.expunge_all(); s.close()
         return ads
 
 
@@ -49,7 +49,7 @@ def get_advertisements(start='',end=''):
             and_(Advertisement.start_date <= end, models.Advertisement.end_date >= end),
             and_(Advertisement.start_date >= start, models.Advertisement.end_date <= end)
             )).all()
-    s.commit()
+    s.expunge_all(); s.close()
     return ads
 
 
@@ -85,7 +85,7 @@ def get_total_counts(start=datetime(2017,1,1), end=datetime.now()):
         if len(d) > 0:
             counts[day.strftime('%Y-%m-%d')] = d[0].count;
         day = day + timedelta(days=1)
-    s.commit()
+    s.expunge_all(); s.close()
 
     return counts
 
@@ -113,7 +113,7 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
             if len(d) > 0:
                 counts[day.strftime('%Y-%m-%d')].append({ 'word': tw.word, 'count': d[0].count })
         day = day + timedelta(days=1)
-    s.commit()
+    s.expunge_all(); s.close()
 
     return counts
 
