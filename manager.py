@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import sys, urllib, json, io, datetime, calendar, os
-import models
+import urllib.request
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -22,6 +22,7 @@ scrape_url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat?lang=fi
 
 
 
+global swagger_template
 swagger_template = {
   "swagger": "2.0",
   "info": {
@@ -55,6 +56,7 @@ swagger_template = {
 
 
 
+import models
 
 def download_advertisements():
     ads = {}
@@ -64,21 +66,21 @@ def download_advertisements():
     except:
         print ("no ads file, making a new one: %s" % file_name)
 
-    r = urllib.urlopen(scrape_url)
-    j = json.loads(r.read())
+    r = urllib.request.urlopen(scrape_url)
+    j = json.loads(r.read().decode('utf-8'))
 
     print( "Ilmoituksia tunnetaan: %s kpl" % (len(ads.keys())))
     print( "Ilmoituksia netissa: %s kpl" % (j["response"]["numFound"]))
 
     timestamp = datetime.datetime.now().isoformat()
     for tag in j["response"]["docs"]:
-        if unicode(tag['ilmoitusnumero']) in ads:
+        if str(tag['ilmoitusnumero']) in ads:
             print ("Tunnettiin jo ilmoitus %s" % (tag['ilmoitusnumero']))
         else:
             print ((str(tag['ilmoitusnumero']) + " " + tag['tehtavanimi']))
             url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat/" + str(tag['ilmoitusnumero'])
-            r = urllib2.urlopen(url)
-            j2 = json.loads(r.read())
+            r = urllib.request.urlopen(url)
+            j2 = json.loads(r.read().decode('utf-8'))
             ads[tag['ilmoitusnumero']] = {
                 "lukupvm" : timestamp,
                 "ilmoitus": j2["response"]["docs"][0]

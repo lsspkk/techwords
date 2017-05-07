@@ -4,30 +4,31 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
 
+from models import TechWord, Day, Advertisement, Match
 import models
 
 def get_techwords():
     s = models.Session()
-    words = s.query(models.TechWord).all()
+    words = s.query(TechWord).all()
     s.commit()
     return words
 
 def get_techword(word):
     s = models.Session()
-    word = s.query(models.TechWord).filter_by(word=word).all()
+    word = s.query(TechWord).filter_by(word=word).all()
     s.commit()
     return word
 
 def get_advertisement(id):
     s = models.Session()
-    ad = s.query(models.Advertisement).filter(models.Advertisement.id==id).all()
+    ad = s.query(Advertisement).filter(Advertisement.id==id).all()
     s.commit()
     return ad
 
 def get_advertisements(start='',end=''):
     s = models.Session()
     if start == '' or end == '':
-        ads = s.query(models.Advertisement).all()
+        ads = s.query(Advertisement).all()
         s.commit()
         return ads
 
@@ -42,11 +43,11 @@ def get_advertisements(start='',end=''):
     # - end_date is in range
     # - range is between start_date and end_date
 
-    ads = s.query(models.Advertisement).filter(
+    ads = s.query(Advertisement).filter(
         or_(
-            and_(models.Advertisement.start_date <= start, models.Advertisement.end_date >= start),
-            and_(models.Advertisement.start_date <= end, models.Advertisement.end_date >= end),
-            and_(models.Advertisement.start_date >= start, models.Advertisement.end_date <= end)
+            and_(Advertisement.start_date <= start, models.Advertisement.end_date >= start),
+            and_(Advertisement.start_date <= end, models.Advertisement.end_date >= end),
+            and_(Advertisement.start_date >= start, models.Advertisement.end_date <= end)
             )).all()
     s.commit()
     return ads
@@ -80,7 +81,7 @@ def get_total_counts(start=datetime(2017,1,1), end=datetime.now()):
     counts = {}
     while day <= end:
         toDate = day + timedelta(days=1)
-        d = s.query(models.Day).filter(models.Day.date >= day, models.Day.date <= toDate).all()
+        d = s.query(Day).filter(Day.date >= day, models.Day.date <= toDate).all()
         if len(d) > 0:
             counts[day.strftime('%Y-%m-%d')] = d[0].count;
         day = day + timedelta(days=1)
@@ -100,7 +101,7 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
     day = start
 
     s = models.Session()
-    words = s.query(models.TechWord)
+    words = s.query(TechWord)
     counts = {}
     while day <= end:
         toDate = day + timedelta(days=1)

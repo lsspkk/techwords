@@ -5,11 +5,13 @@ from flask import Flask, abort, request, jsonify
 from flask_cors import CORS, cross_origin
 from flasgger import Swagger
 import datetime, json
-import models, controllers, utils
 
-import manager
 
 app = Flask(__name__)
+
+import manager
+import models, controllers, utils
+
 app.config['SWAGGER'] = { 'title': 'TechWords API', 'uiversion': 2 }
 Swagger(app, template=manager.swagger_template)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
