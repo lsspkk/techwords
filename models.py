@@ -2,12 +2,15 @@
 # -*- coding: UTF-8 -*-
 import json, datetime, sys
 from datetime import datetime, timedelta
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Sequence, DateTime
 from sqlalchemy.orm import sessionmaker
 
+
 import manager
+#database_file = 'sqlite:///data/foo.db'
 
 Base = declarative_base()
 
@@ -78,11 +81,13 @@ class Match(Base):
 
 
 
-
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+        
+eprint("---tietokanta: ", manager.database_file)
 engine = create_engine(manager.database_file)
 Base.metadata.create_all(engine)
-session_factory = sessionmaker(bind=engine)
-Session = scoped_session(session_factory)
+Session = sessionmaker(bind=engine)
 
 
 
@@ -97,7 +102,6 @@ def init_techwords():
         tw = TechWord(word=w['word'], search_strings=json.dumps(w['search_strings']).lower())
         s.add(tw)
     s.commit()
-    s.remove()
 
 # clear all ads from database and add all scraped ads to database
 def init_ads():
@@ -119,7 +123,6 @@ def init_ads():
         s.add(ad)
 
     s.commit()
-    s.remove()
 
 
 
@@ -192,7 +195,6 @@ def add_new_advertisements():
         s.add(ad)
 
     s.commit()
-    s.remove()
 
 
 # clear old day/count match/count info
@@ -204,7 +206,6 @@ def update_database():
     for m in matches: s.delete(m)
     for d in days: s.delete(d)
     s.commit()
-    s.remove()
 
     search_all_techwords()
 
@@ -225,7 +226,7 @@ def search_all_techwords():
                           "id": tw.id }
         search_ready_words.append(search_ready_tw)
         #print ("\n---", tw.word)
-        #for key in search_ready_tw['search_strings']: print (key,)
+        #for key in search_ready_tw['search_strings']: print key,
 
     results = {}
 
@@ -234,10 +235,9 @@ def search_all_techwords():
 
         search_techwords_from_ad(ad.text, search_ready_words, results)
         print ("etsitaan tech_wordit ilmoituksesta: %s" % ad.title)
-        #for key in results: print (key, ':', results[key], ' ',)
+        #for key in results: print key, ':', results[key], ' ',
         #print ('')
 
         store_results_for_all_dates(ad, results, s)
 
     s.commit()
-    s.remove()
