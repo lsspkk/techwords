@@ -4,23 +4,32 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
 
-from models import Day, TechWord, Match, Advertisement
-from models import Session
-
-s = Session()
+import models
 
 def get_techwords():
-    return s.query(TechWord).all()
+    s = models.Session()
+    words = s.query(models.TechWord).all()
+    s.commit()
+    return words
 
 def get_techword(word):
-    return s.query(TechWord).filter_by(word=word).all()
+    s = models.Session()
+    word = s.query(models.TechWord).filter_by(word=word).all()
+    s.commit()
+    return word
 
 def get_advertisement(id):
-    return s.query(Advertisement).filter(Advertisement.id==id).all()
+    s = models.Session()
+    ad = s.query(models.Advertisement).filter(models.Advertisement.id==id).all()
+    s.commit()
+    return ad
 
 def get_advertisements(start='',end=''):
+    s = models.Session()
     if start == '' or end == '':
-        return s.query(Advertisement).all()
+        ads = s.query(models.Advertisement).all()
+        s.commit()
+        return ads
 
 
     # search full days including the end day
@@ -33,12 +42,13 @@ def get_advertisements(start='',end=''):
     # - end_date is in range
     # - range is between start_date and end_date
 
-    ads = s.query(Advertisement).filter(
+    ads = s.query(models.Advertisement).filter(
         or_(
-            and_(Advertisement.start_date <= start, Advertisement.end_date >= start),
-            and_(Advertisement.start_date <= end, Advertisement.end_date >= end),
-            and_(Advertisement.start_date >= start, Advertisement.end_date <= end)
+            and_(models.Advertisement.start_date <= start, models.Advertisement.end_date >= start),
+            and_(models.Advertisement.start_date <= end, models.Advertisement.end_date >= end),
+            and_(models.Advertisement.start_date >= start, models.Advertisement.end_date <= end)
             )).all()
+    s.commit()
     return ads
 
 
@@ -66,13 +76,15 @@ def get_total_counts(start=datetime(2017,1,1), end=datetime.now()):
     end = end + timedelta(days=1)
     day = start
 
+    s = models.Session()
     counts = {}
     while day <= end:
         toDate = day + timedelta(days=1)
-        d = s.query(Day).filter(Day.date >= day, Day.date <= toDate).all()
+        d = s.query(models.Day).filter(models.Day.date >= day, models.Day.date <= toDate).all()
         if len(d) > 0:
             counts[day.strftime('%Y-%m-%d')] = d[0].count;
         day = day + timedelta(days=1)
+    s.commit()
 
     return counts
 
@@ -87,7 +99,8 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
     end = end + timedelta(days=1)
     day = start
 
-    words = s.query(TechWord)
+    s = models.Session()
+    words = s.query(models.TechWord)
     counts = {}
     while day <= end:
         toDate = day + timedelta(days=1)
@@ -99,6 +112,7 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
             if len(d) > 0:
                 counts[day.strftime('%Y-%m-%d')].append({ 'word': tw.word, 'count': d[0].count })
         day = day + timedelta(days=1)
+    s.commit()
 
     return counts
 
