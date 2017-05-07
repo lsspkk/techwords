@@ -4,6 +4,27 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
 
+# http://docs.sqlalchemy.org/en/latest/faq/performance.html
+import cProfile
+from io import StringIO
+import pstats
+import contextlib
+
+
+@contextlib.contextmanager
+def profiled():
+    pr = cProfile.Profile()
+    pr.enable()
+    yield
+    pr.disable()
+    s = StringIO.StringIO()
+    ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
+    ps.print_stats()
+    # uncomment this to see who's calling what
+    # ps.print_callers()
+    print(s.getvalue())
+
+
 from models import TechWord, Day, Advertisement, Match
 import models
 
@@ -98,21 +119,14 @@ def get_techword_counts(start=datetime(2017,1,1), end=datetime.now()):
     start = start.replace(hour=1,minute=0)
     end = end.replace(hour=0,minute=0)
     end = end + timedelta(days=1)
-    day = start
 
     s = models.Session()
-    words = s.query(TechWord)
     counts = {}
-    while day <= end:
-        toDate = day + timedelta(days=1)
-        counts[day.strftime('%Y-%m-%d')] = []
-        for tw in words:
-            d = s.query(Match).filter(Match.date >= day,
-                                      Match.date < toDate,
-                                      Match.techword_id == tw.id).all()
-            if len(d) > 0:
-                counts[day.strftime('%Y-%m-%d')].append({ 'word': tw.word, 'count': d[0].count })
-        day = day + timedelta(days=1)
+    matches = s.query(Match).filter(Match.date >= start, Match.date < end).all()
+    for m in matches:
+        if m.date.strftime('%Y-%m-%d') not in counts:
+            counts[m.date.strftime('%Y-%m-%d')] = []
+        counts[m.date.strftime('%Y-%m-%d')].append({ 'word': m.techword, 'count': m.count })
     s.expunge_all(); s.close()
 
     return counts

@@ -9,6 +9,8 @@ from sqlalchemy import Column, Integer, String, Sequence, DateTime
 from sqlalchemy.orm import sessionmaker
 
 
+
+
 import manager
 #database_file = 'sqlite:///data/foo.db'
 
@@ -77,6 +79,7 @@ class Match(Base):
     id = Column(Integer, Sequence('match_seq'),primary_key=True)
     date = Column(DateTime)
     techword_id = Column(Integer)
+    techword = Column(String(24))
     count = Column(Integer)
 
 
@@ -146,7 +149,7 @@ def search_techwords_from_ad(text, tech_words, results):
 #   add Match -objects for each day of year and every techword
 #        for each match, update with the search results
 #
-def store_results_for_all_dates(ad, results, s):
+def store_results_for_all_dates(ad, results, tech_words, s):
     day = datetime(ad.start_date.year, ad.start_date.month, ad.start_date.day)
     while day <= ad.end_date:
         toDate = day + timedelta(days=1)
@@ -158,12 +161,16 @@ def store_results_for_all_dates(ad, results, s):
         elif len(d) == 1:
             d[0].count = d[0].count + 1
 
+        techword_map = {}
+        for tw in tech_words:
+            techword_map[tw.id] = tw.word
+
         for key in results:
             m = s.query(Match).filter(Match.date >= day,
                                             Match.date < toDate,
                                             Match.techword_id == key).all()
             if len(m) == 0:
-                new_m = Match(techword_id=key,count=results[key],date=day)
+                new_m = Match(techword_id=key,techword=techword_map[key], count=results[key],date=day)
                 s.add(new_m)
             elif len(m) == 1:
                 m[0].count = m[0].count + results[key]
@@ -238,6 +245,6 @@ def search_all_techwords():
         #for key in results: print key, ':', results[key], ' ',
         #print ('')
 
-        store_results_for_all_dates(ad, results, s)
+        store_results_for_all_dates(ad, results, words, s)
 
     s.commit()
