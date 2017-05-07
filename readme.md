@@ -5,7 +5,7 @@ Provides data about different technologies (tech words) that employers seek.
 
 Done with Python3 and Flask microframework
 
-(todo  APIkey registration and )
+(todo  let users who have a valid APIKEY post / put / delete techwords )
 
 
 # Docs and Demo
