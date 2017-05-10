@@ -26,7 +26,7 @@ try:
         data = json.load(file)
         PROPERTY_ID = data['PROPERTY_ID']
 except Exception:
-    data = []    
+    data = []
 
 
 
