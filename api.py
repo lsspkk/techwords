@@ -15,6 +15,7 @@ compress.init_app(app)
 import manager
 import models, controllers, utils
 from utils import measure_time
+from google-analytics import send_ga
 
 app.config['SWAGGER'] = { 'title': 'TechWords API', 'uiversion': 2 }
 Swagger(app, template=manager.swagger_template)
@@ -22,7 +23,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/', methods=['GET'])
 def intro():
-
+    send_ga(request.path)
     
     return "TechWords API" + """
         <script>
@@ -30,10 +31,10 @@ def intro():
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
           })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        
-          ga('create', '***REMOVED***', 'auto');
+
+          ga('create', 'UA-67541238-2', 'auto');
           ga('send', 'pageview');
-            
+
         </script>
             """
 
@@ -68,6 +69,9 @@ def trends():
       404:
         description: "Bad format in dates"
     """
+    send_ga(request.path)
+
+
     today = datetime.datetime.now()
 
     start_date = request.args.get('start_date', today.isoformat())
@@ -95,6 +99,8 @@ def techwords():
         examples:
           [ { tech_word: 'C',  search_strings: [ " C, ", " C." ] } ]
     """
+    send_ga(request.path)
+
     words = controllers.get_techwords()
     return jsonify([w.serialize for w in words])
 
@@ -122,6 +128,8 @@ def techword(word):
       404:
         description: "Techword not found"
     """
+    send_ga(request.path)
+
     words = controllers.get_techword(word)
     if len(words) == 0:
         return bad_request(("TechWord %s not found" % word))
@@ -165,6 +173,7 @@ def advertisements():
         description: "Bad format in dates"
     """
     try:
+        send_ga(request.path)
         start_date = request.args.get('start_date', '')
         end_date = request.args.get('end_date', '')
 
@@ -215,6 +224,7 @@ def matchresults(word, id):
       404:
         description: "Parameters for techword or advertisement id are wrong"
     """
+    send_ga(request.path)
 
     words = controllers.get_techword(word)
     if len(words) == 0:
@@ -254,6 +264,9 @@ def matchresult(id):
       404:
         description: "Advertisement id are wrong"
     """
+    send_ga(request.path)
+
+
     words = controllers.get_techwords()
     ads = controllers.get_advertisement(id)
     if len(ads) == 0:
