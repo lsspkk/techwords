@@ -13,12 +13,12 @@ from os import environ
 import time
 import logging
 from flask import request
+from manager import PROPERTY_ID
 
 logger1 = logging.getLogger('google_analytics')
 
 
 def send_ga(request):
-    PROPERTY_ID = "UA-67541238-2"
     PATH = request.path
 
     # Generate the visitor identifier somehow. I get it from the
@@ -39,7 +39,7 @@ def send_ga(request):
     if request.remote_addr:
         DATA['utmr'] = request.remote_addr
         logger1.info("remote addr: %s" % request.remote_addr)
-            
+
     # Encode this data and generate the final URL
     URL = urlunparse(("http",
                       "www.google-analytics.com",
@@ -51,6 +51,3 @@ def send_ga(request):
     # Make the request
     logger1.info( "Requesting \n %s" % URL)
     logger1.info(urlopen(URL).info())
-
-if __name__ == '__main__':
-    send_ga("/")

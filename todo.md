@@ -4,12 +4,9 @@ POST techword
 GET trends
 - with total counts
 
+### Add some kind of access analytics.
+https://medium.com/python-programming-language/pushing-data-to-google-analytics-with-python-80eb9691d61f
 
-
-Add swagger docs 
-
-
-Add some kind of access analytics.
 
 
 Add some kind of access limit.
