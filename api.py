@@ -9,7 +9,7 @@ import datetime, json, time
 import logging
 
 compress = Compress()
-app = Flask(__name__)jed
+app = Flask(__name__)
 compress.init_app(app)
 
 import manager
@@ -17,7 +17,7 @@ from manager import PROPERTY_ID
 
 import models, controllers, utils
 from utils import measure_time
-from google-analytics2 import send_ga
+from google_analytics2 import send_ga
 
 app.config['SWAGGER'] = { 'title': 'TechWords API', 'uiversion': 2 }
 Swagger(app, template=manager.swagger_template)
@@ -25,7 +25,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/', methods=['GET'])
 def intro():
-    send_ga(request.path)
+    send_ga(request)
 
     return "TechWords API" + """
         <script>
@@ -71,7 +71,7 @@ def trends():
       404:
         description: "Bad format in dates"
     """
-    send_ga(request.path)
+    send_ga(request)
 
 
     today = datetime.datetime.now()
@@ -101,7 +101,7 @@ def techwords():
         examples:
           [ { tech_word: 'C',  search_strings: [ " C, ", " C." ] } ]
     """
-    send_ga(request.path)
+    send_ga(request)
 
     words = controllers.get_techwords()
     return jsonify([w.serialize for w in words])
@@ -130,7 +130,7 @@ def techword(word):
       404:
         description: "Techword not found"
     """
-    send_ga(request.path)
+    send_ga(request)
 
     words = controllers.get_techword(word)
     if len(words) == 0:
@@ -175,7 +175,7 @@ def advertisements():
         description: "Bad format in dates"
     """
     try:
-        send_ga(request.path)
+        send_ga(request)
         start_date = request.args.get('start_date', '')
         end_date = request.args.get('end_date', '')
 
@@ -226,7 +226,7 @@ def matchresults(word, id):
       404:
         description: "Parameters for techword or advertisement id are wrong"
     """
-    send_ga(request.path)
+    send_ga(request)
 
     words = controllers.get_techword(word)
     if len(words) == 0:
@@ -266,7 +266,7 @@ def matchresult(id):
       404:
         description: "Advertisement id are wrong"
     """
-    send_ga(request.path)
+    send_ga(request)
 
 
     words = controllers.get_techwords()
