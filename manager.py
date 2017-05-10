@@ -20,7 +20,13 @@ database_file = 'sqlite:///'+ dir_path + '/data/foo.db'
 # coders from Pirkanmaa area
 scrape_url = "http://www.mol.fi/tyopaikat/tyopaikkatiedotus/ws/tyopaikat?lang=fi&hakusana=&hakusanakentta=sanahaku&alueet=pirkanmaa&ilmoitettuPvm=1&valitutAmmattialat=25&vuokrapaikka=---&start=0&kentat=ilmoitusnumero,tyokokemusammattikoodi,ammattiLevel3,tehtavanimi,tyokokemusammatti,tyonantajanNimi,kunta,ilmoituspaivamaara,hakuPaattyy,tyoaikatekstiYhdistetty,tyonKestoKoodi,tyonKesto,tyonKestoTekstiYhdistetty,hakemusOsoitetaan,maakunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&rows=300&sort=mainAmmattiRivino+asc,+tehtavanimi+asc,+tyonantajanNimi+asc,+viimeinenHakupaivamaara+asc&facet.fkentat=ammattiLevel3,maakunta,kunta,maa,hakuTyosuhdetyyppikoodi,hakuTyoaikakoodi,hakuTyonKestoKoodi&facet.fsort=index&facet.flimit=10000&_=1488917769087"
 
-
+PROPERTY_ID = ""
+try:
+    with open("keys.json") as file:
+        data = json.load(file)
+        PROPERTY_ID = data['PROPERTY_ID']
+except Exception:
+    data = []    
 
 
 
@@ -42,7 +48,7 @@ swagger_template = {
   },
   "host": "hyöty.net",  # overrides localhost:500
   "basePath": "/techwords",  # base bash for blueprint registration
-  "schemes": 
+  "schemes":
     [
 #      "http",
       "https"
