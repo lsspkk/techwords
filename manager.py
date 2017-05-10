@@ -35,19 +35,19 @@ swagger_template = {
       "responsibleOrganization": "lvp",
       "responsibleDeveloper": "lvp",
       "email": "lspkk@gmail.com",
-      #"url": "www.hyöty.net",
+      "url": "https://github.com/lsspkk/techwords",
     },
     "termsOfService": "http://me.com/terms",
     "version": "1.0.0"
   },
-  #"host": "localhost:9090",  # overrides localhost:500
-  #"basePath": "/api/v1",  # base bash for blueprint registration
-  "schemes": [
+  "host": "hyöty.net",  # overrides localhost:500
+  "basePath": "/techwords",  # base bash for blueprint registration
+  "schemes": 
     [
-      "http",
-#      "https"
+#      "http",
+      "https"
     ]
-  ],
+  ,
   "operationId": "getmyData"
 }
 
