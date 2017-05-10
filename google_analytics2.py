@@ -17,7 +17,7 @@ logger1 = logging.getLogger('google_analytics')
 
 
 def send_ga(request):
-    PROPERTY_ID = "***REMOVED***"
+    PROPERTY_ID = "UA-XXXXXXXX"
     data = {
         'v': '1',  # API Version.
         'tid': PROPERTY_ID,  # Tracking ID / Property ID.
