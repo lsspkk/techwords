@@ -2,18 +2,24 @@
 #Simple proof of concept code to push data to Google Analytics.
 #Related blog post:
 # * https://medium.com/python-programming-language/80eb9691d61f
-#
+# https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview
 from random import randint
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from urllib.parse import urlunparse
+from urllib.parse import urlparse
 from hashlib import sha1
 from os import environ
 import time
+import logging
+from flask import request
 
-def send_ga(route):
+logger1 = logging.getLogger('google_analytics')
+
+
+def send_ga(request):
     PROPERTY_ID = "***REMOVED***"
-    PATH = route
+    PATH = request.path
 
     # Generate the visitor identifier somehow. I get it from the
     # environment, calculate the SHA1 sum of it, convert this from base 16
@@ -27,8 +33,13 @@ def send_ga(route):
             "utmn": str(randint(1, 9999999999)),
             "utmp": PATH,
             "utmac": PROPERTY_ID,
+            "utmhn": urlparse(request.url).hostname,
             "utmcc": "__utma=%s;" % ".".join(["1", VISITOR, "1", "1", "1", "1"])}
 
+    if request.remote_addr:
+        DATA['utmr'] = request.remote_addr
+        logger1.info("remote addr: %s" % request.remote_addr)
+            
     # Encode this data and generate the final URL
     URL = urlunparse(("http",
                       "www.google-analytics.com",
@@ -38,8 +49,8 @@ def send_ga(route):
                       ""))
 
     # Make the request
-    print ("Requesting", URL)
-    print (urlopen(URL).info())
+    logger1.info( "Requesting \n %s" % URL)
+    logger1.info(urlopen(URL).info())
 
 if __name__ == '__main__':
     send_ga("/")
